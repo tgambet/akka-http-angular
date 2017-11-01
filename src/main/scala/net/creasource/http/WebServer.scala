@@ -1,14 +1,12 @@
 package net.creasource.http
 
-import java.io.File
-
 import akka.actor.{ActorRef, ActorSystem, Status}
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.ws.Message
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server._
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
-
 import net.creasource.core._
 
 import scala.concurrent.ExecutionContext
@@ -38,26 +36,25 @@ trait WebServer {
   }
 
   def routes: Route =
-    // Websocket
     path("socket") {
       handleWebSocketMessages(socketFlow)
     } ~
-    // 1. check if file exists
-    // 2. if so serve the file
-    // 3. if not check Accept header
-    // 4. if text/html serve index.html
-    // 5. if not reject
     extractUnmatchedPath { path =>
       encodeResponse {
         headerValueByName("Accept") { accept =>
-          val webFolder = "web/dist"
-          val requestedFile = new File(s"$webFolder$path")
-          if (requestedFile.isFile)
-            getFromFile(requestedFile)
-          else if (accept.contains("text/html"))
-            getFromFile(s"$webFolder/index.html")
-          else
-            reject()
+          val serveIndexIfNotFound: RejectionHandler =
+            RejectionHandler.newBuilder()
+              .handleNotFound {
+                if (accept.contains("text/html")) {
+                  getFromResource("dist/index.html")
+                } else {
+                  complete(StatusCodes.NotFound, "The requested resource could not be found.")
+                }
+              }
+              .result()
+          handleRejections(serveIndexIfNotFound) {
+            getFromResourceDirectory("dist")
+          }
         }
       }
   }
