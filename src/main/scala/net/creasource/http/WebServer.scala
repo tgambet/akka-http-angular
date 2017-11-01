@@ -9,7 +9,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
 
-import net.creasource.api._
+import net.creasource.core._
 
 import scala.concurrent.ExecutionContext
 

@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import scala.concurrent.Future
 import scala.io.StdIn
 
-import net.creasource.api.Application
+import net.creasource.core.Application
 import net.creasource.http.WebServer
 
 object Main extends App with WebServer {

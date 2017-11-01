@@ -1,4 +1,4 @@
-package net.creasource.api
+package net.creasource.core
 
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
