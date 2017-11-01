@@ -4,6 +4,7 @@ lazy val akkaHttpVersion = "10.0.10"
 lazy val akkaVersion    = "2.5.6"
 
 val ng = inputKey[Int]("The angular-cli command.")
+val ngBuild = taskKey[Int]("ng build -prod -aot.")
 
 lazy val root = (project in file(".")).
   settings(
@@ -39,5 +40,17 @@ lazy val root = (project in file(".")).
         }
       }
       Process(command, new File("./web").getAbsoluteFile).!
-    }
+    },
+    ngBuild := {
+      println("Building Angular application...")
+      val command = {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+          s"powershell -Command ng build -prod -aot"
+        } else {
+          s"ng build -prod -aot"
+        }
+      }
+      Process(command, new File("./web").getAbsoluteFile).!
+    },
+    stage := stage.dependsOn(ngBuild).value
   ).enablePlugins(JavaAppPackaging)
