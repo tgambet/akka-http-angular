@@ -3,61 +3,15 @@ package net.creasource.http
 import java.io.File
 
 import akka.Done
-import akka.actor.Status.{Failure, Success}
-import akka.actor.{Actor, ActorRef, ActorSystem, OneForOneStrategy, Props, Stash, Status, SupervisorStrategy, Terminated}
-import akka.event.Logging
-import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
+import akka.actor.{ActorRef, ActorSystem, Status}
+import akka.http.scaladsl.model.ws.Message
 import akka.http.scaladsl.server.{HttpApp, Route}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
 
-import scala.concurrent.duration._
 import scala.util.Try
 import net.creasource.api._
 
-object SocketActor {
-  def props()(implicit materializer: ActorMaterializer): Props = Props[SocketActor]
-}
-
-class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with Stash {
-  private val logger = Logging(context.system, this)
-
-  override def receive: Receive = {
-    case sourceActor: ActorRef ⇒
-      val user = context.watch(context.actorOf(UserActor.props(), "user"))
-      unstashAll()
-      context.become {
-        case TextMessage.Strict(data)        => user ! data
-        case BinaryMessage.Strict(_)         => // ignore
-        case TextMessage.Streamed(stream)    => stream.runWith(Sink.ignore)
-        case BinaryMessage.Streamed(stream)  => stream.runWith(Sink.ignore)
-        case msg: String if sender() == user => sourceActor ! TextMessage(msg)
-        case Terminated(`user`) =>
-          logger.info("UserActor terminated. Terminating.")
-          sourceActor ! Status.Success(())
-          context.stop(self)
-        case s @ Status.Success(_) =>
-          logger.info("Socket closed. Terminating.")
-          sourceActor ! s
-          context.stop(self)
-        case f @ Failure(cause) =>
-          logger.error(cause, "Socket failed. Terminating.")
-          sourceActor ! f
-          context.stop(self)
-      }
-    case _ => stash()
-  }
-
-  override val supervisorStrategy: OneForOneStrategy =
-    OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 1.minute, loggingEnabled = true) {
-      case _: Exception => SupervisorStrategy.Stop
-    }
-}
-
-
-/**
-  * Created by Thomas on 16/02/2017.
-  */
 class WebServer(implicit val app: Application) extends HttpApp {
 
   implicit lazy val system: ActorSystem = app.system
