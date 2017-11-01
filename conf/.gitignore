@@ -1,0 +1,4 @@
+# This is where the local configuration resides
+# Check reference.conf for the reference configuration
+*
+!.gitignore
