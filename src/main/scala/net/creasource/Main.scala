@@ -11,8 +11,8 @@ object Main extends App {
 
   implicit val app: Application = Application()
 
-  private val address = app.conf.getString("http.binding.address")
-  private val port = app.conf.getInt("http.binding.port")
+  private val address = app.conf.getString("http.address")
+  private val port = app.conf.getInt("http.port")
 
   new WebServer().startServer(address, port, ServerSettings(app.conf), app.system)
 
