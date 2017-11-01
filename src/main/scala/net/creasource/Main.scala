@@ -1,21 +1,40 @@
 package net.creasource
 
-import akka.http.scaladsl.settings.ServerSettings
+import akka.http.scaladsl.Http
+
+import scala.concurrent.Future
 import net.creasource.api.Application
 import net.creasource.http.WebServer
 
-/**
-  * Created by Thomas on 16/02/2017.
-  */
-object Main extends App {
+import scala.io.StdIn
+
+object Main extends App with WebServer {
 
   implicit val app: Application = Application()
 
-  private val address = app.conf.getString("http.address")
+  private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
+  private val stopOnReturn  = app.conf.getBoolean("http.stopOnReturn")
 
-  new WebServer().startServer(address, port, ServerSettings(app.conf), app.system)
+  val bindingFuture: Future[Http.ServerBinding] = Http().bindAndHandle(routes, host, port)
 
-  app.shutdown()
+  bindingFuture.foreach { _ =>
+    app.system.log.info("Server online at http://{}:{}/", host, port)
+  }
+
+  bindingFuture.failed.foreach { ex =>
+    app.system.log.error(ex, "Failed to bind to {}:{}!", host, port)
+  }
+
+  if (stopOnReturn) {
+    println(s"Press RETURN to stop...")
+    StdIn.readLine()
+    bindingFuture
+      .flatMap(_.unbind())
+      .onComplete { _ =>
+        killSwitch.shutdown()
+        app.shutdown()
+      }
+  }
 
 }

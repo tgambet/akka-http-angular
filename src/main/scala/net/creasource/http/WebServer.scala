@@ -2,20 +2,25 @@ package net.creasource.http
 
 import java.io.File
 
-import akka.Done
 import akka.actor.{ActorRef, ActorSystem, Status}
 import akka.http.scaladsl.model.ws.Message
-import akka.http.scaladsl.server.{HttpApp, Route}
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
 
-import scala.util.Try
 import net.creasource.api._
 
-class WebServer(implicit val app: Application) extends HttpApp {
+import scala.concurrent.ExecutionContext
+
+trait WebServer {
+
+  implicit val app: Application
 
   implicit lazy val system: ActorSystem = app.system
   implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
+
+  implicit lazy val dispatcher: ExecutionContext = system.dispatcher
 
   val killSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
 
@@ -55,11 +60,6 @@ class WebServer(implicit val app: Application) extends HttpApp {
             reject()
         }
       }
-  }
-
-  override def postServerShutdown(attempt: Try[Done], system: ActorSystem): Unit = {
-    killSwitch.shutdown()
-    super.postServerShutdown(attempt, system)
   }
 
 }
