@@ -15,7 +15,7 @@ object SocketActor {
 class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
-  //logger.info("Socket opened. Actor created.")
+  logger.info("Socket opened. Actor created.")
 
   override def receive: Receive = {
     case sourceActor: ActorRef =>
@@ -48,5 +48,10 @@ class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with
     OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 1.minute, loggingEnabled = true) {
       case _: Exception => SupervisorStrategy.Stop
     }
+
+  override def postStop(): Unit = {
+    logger.info("SocketActor killed")
+    super.postStop()
+  }
 
 }
