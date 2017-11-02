@@ -1,4 +1,4 @@
-package net.creasource.http
+package net.creasource.http.actors
 
 import akka.actor.{Actor, Props, Stash}
 

@@ -1,40 +1,31 @@
 package net.creasource
 
-import akka.http.scaladsl.Http
+import akka.actor.ActorSystem
 
-import scala.concurrent.Future
 import scala.io.StdIn
 
 import net.creasource.core.Application
-import net.creasource.http.WebServer
+import net.creasource.http.{SPAWebServer, SocketWebServer}
 
-object Main extends App with WebServer {
+object Main extends App with SPAWebServer with SocketWebServer {
 
   implicit val app: Application = Application()
 
+  override implicit val system: ActorSystem = app.system
+
   private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
-  private val stopOnReturn  = app.conf.getBoolean("http.stopOnReturn")
+  private val stopOnReturn = app.conf.getBoolean("http.stopOnReturn")
 
-  val bindingFuture: Future[Http.ServerBinding] = Http().bindAndHandle(routes, host, port)
+  start(host, port)
 
-  bindingFuture.foreach { _ =>
-    app.system.log.info("Server online at http://{}:{}/", host, port)
-  }
-
-  bindingFuture.failed.foreach { ex =>
-    app.system.log.error(ex, "Failed to bind to {}:{}!", host, port)
-  }
+  //override def routes: Route = complete(StatusCodes.OK, "OK") ~ super.routes
 
   if (stopOnReturn) {
-    println(s"Press RETURN to stop...")
+    system.log.info(s"Press RETURN to stop...")
     StdIn.readLine()
-    bindingFuture
-      .flatMap(_.unbind())
-      .onComplete { _ =>
-        killSwitch.shutdown()
-        app.shutdown()
-      }
+    import system.dispatcher
+    stop().onComplete(_ => app.shutdown())
   }
 
 }

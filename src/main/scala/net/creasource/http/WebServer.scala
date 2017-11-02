@@ -1,62 +1,40 @@
 package net.creasource.http
 
-import akka.actor.{ActorRef, ActorSystem, Status}
-import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.ws.Message
-import akka.http.scaladsl.server.Directives._
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.server._
-import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
-import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
-import net.creasource.core._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.RouteResult.route2HandlerFlow
+import akka.stream.ActorMaterializer
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait WebServer {
 
-  implicit val app: Application
+  implicit val system: ActorSystem
 
-  implicit lazy val system: ActorSystem = app.system
   implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
 
-  implicit lazy val dispatcher: ExecutionContext = system.dispatcher
+  implicit private lazy val dispatcher: ExecutionContext = system.dispatcher
 
-  val killSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
+  private var bindingFuture: Future[Http.ServerBinding] = _
 
-  def socketFlow: Flow[Message, Message, Any] = {
+  def routes: Route = reject
 
-    val socketActor: ActorRef = system.actorOf(SocketActor.props())
-
-    val flow: Flow[Message, Message, ActorRef] =
-      Flow.fromSinkAndSourceMat(
-        Sink.actorRef(socketActor, Status.Success(())),
-        Source.actorRef(1000, OverflowStrategy.fail)
-      )(Keep.right)
-
-    flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor).via(killSwitch.flow)
+  def start(host: String, port: Int) {
+    bindingFuture = Http().bindAndHandle(route2HandlerFlow(routes), host, port)
+    bindingFuture.foreach { _ =>
+      system.log.info("Server online at http://{}:{}/", host, port)
+    }
+    bindingFuture.failed.foreach { ex =>
+      system.log.error(ex, "Failed to bind to {}:{}!", host, port)
+    }
   }
 
-  def routes: Route =
-    path("socket") {
-      handleWebSocketMessages(socketFlow)
-    } ~
-    extractUnmatchedPath { path =>
-      encodeResponse {
-        headerValueByName("Accept") { accept =>
-          val serveIndexIfNotFound: RejectionHandler =
-            RejectionHandler.newBuilder()
-              .handleNotFound {
-                if (accept.contains("text/html")) {
-                  getFromResource("dist/index.html")
-                } else {
-                  complete(StatusCodes.NotFound, "The requested resource could not be found.")
-                }
-              }
-              .result()
-          handleRejections(serveIndexIfNotFound) {
-            getFromResourceDirectory("dist")
-          }
-        }
-      }
+  def stop(): Future[Unit] = {
+    require(bindingFuture != null, "No binding found. Have you called start() before?")
+    system.log.info("Unbinding.")
+    bindingFuture.flatMap(_.unbind())
   }
 
 }
