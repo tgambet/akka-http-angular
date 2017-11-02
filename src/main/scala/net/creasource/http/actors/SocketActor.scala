@@ -15,7 +15,7 @@ object SocketActor {
 class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
-  logger.info("Socket opened. Actor created.")
+  //logger.info("Socket opened. Actor created.")
 
   override def receive: Receive = {
     case sourceActor: ActorRef =>
