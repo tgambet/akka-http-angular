@@ -39,7 +39,7 @@ lazy val root = (project in file(".")).
           s"ng $args"
         }
       }
-      Process(command, new File("./web").getAbsoluteFile).!
+      Process(command, new File(".").getAbsoluteFile).!
     },
     ngBuild := {
       println("Building Angular application...")
@@ -50,7 +50,7 @@ lazy val root = (project in file(".")).
           s"ng build -prod -aot"
         }
       }
-      Process(command, new File("./web").getAbsoluteFile).!
+      Process(command, new File(".").getAbsoluteFile).!
     },
     stage := stage.dependsOn(ngBuild).value
   ).enablePlugins(JavaAppPackaging)

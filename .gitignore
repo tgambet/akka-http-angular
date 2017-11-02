@@ -2,3 +2,4 @@
 project/project/
 target/
 logs/
+node_modules/
