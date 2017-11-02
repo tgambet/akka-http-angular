@@ -15,7 +15,7 @@ object SocketActor {
 class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
-  logger.info("SocketActor created")
+  logger.info("Socket opened. Actor created.")
 
   override def receive: Receive = {
     case sourceActor: ActorRef =>
@@ -39,6 +39,7 @@ class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with
           logger.error(cause, "Socket failed. Terminating.")
           sourceActor ! f
           context.stop(self)
+        case m => logger.warning(m.toString)
       }
     case _ => stash()
   }
@@ -48,8 +49,4 @@ class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with
       case _: Exception => SupervisorStrategy.Stop
     }
 
-  override def postStop(): Unit = {
-    logger.info("SocketActor killed")
-    super.postStop()
-  }
 }

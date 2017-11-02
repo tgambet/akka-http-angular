@@ -19,7 +19,7 @@ trait SocketWebServer extends WebServer { self: WebServer =>
     val socketActor: ActorRef = system.actorOf(SocketActor.props())
 
     val flow: Flow[Message, Message, ActorRef] =
-      Flow.fromSinkAndSourceCoupledMat(
+      Flow.fromSinkAndSourceMat(
         Sink.actorRef(socketActor, Status.Success(())),
         Source.actorRef(1000, OverflowStrategy.fail)
       )(Keep.right)
