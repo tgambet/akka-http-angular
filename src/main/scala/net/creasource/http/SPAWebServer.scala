@@ -13,7 +13,7 @@ trait SPAWebServer extends WebServer { self: WebServer =>
           val serveIndexIfNotFound: RejectionHandler =
             RejectionHandler.newBuilder()
               .handleNotFound {
-                if (accept.contains("text/html")) {
+                if (accept.contains("text/html") || accept.contains("*/*")) {
                   getFromResource("dist/index.html")
                 } else {
                   complete(StatusCodes.NotFound, "The requested resource could not be found.")
