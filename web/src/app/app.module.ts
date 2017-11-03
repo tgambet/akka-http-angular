@@ -12,9 +12,9 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    Material.MatMenu,
-    Material.MatSidenav,
-    Material.MatToolbar
+    Material.MatMenuModule,
+    Material.MatSidenavModule,
+    Material.MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
