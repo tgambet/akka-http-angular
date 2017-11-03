@@ -1,6 +1,10 @@
 @import "../../node_modules/minireset.css";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
 app-root {
   position: absolute;
   top: 0;
