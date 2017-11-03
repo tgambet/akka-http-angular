@@ -1,6 +1,6 @@
 <mat-toolbar class="header">
-  <a *ngIf="isSmallScreen && !sidenav.opened" (click)="sidenav.open()"><mat-icon>menu</mat-icon></a>
-  <a *ngIf="isSmallScreen && sidenav.opened" (click)="sidenav.close()"><mat-icon>close</mat-icon></a>
+  <a *ngIf="isSmallScreen && !sidenav.opened" (click)="sidenav.open()" class="icon"><mat-icon>menu</mat-icon></a>
+  <a *ngIf="isSmallScreen && sidenav.opened" (click)="sidenav.close()" class="icon"><mat-icon>close</mat-icon></a>
   My App
 </mat-toolbar>
 
