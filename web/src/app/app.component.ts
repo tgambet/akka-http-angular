@@ -15,26 +15,23 @@ export class AppComponent implements OnInit {
   @ViewChild("sidenav")
   sidenav: Material.MatSidenav;
 
-  sidenavMode: String = "over";
+  isSmallScreen: boolean;
 
   subject: WebSocketSubject<string>;
 
-  constructor(breakpointObserver: BreakpointObserver) {
-    breakpointObserver.observe([
-      Breakpoints.Web
-    ]).subscribe(result => {
-      if (!result.matches) {
-        this.sidenavMode = "over";
-        this.sidenav && this.sidenav.close();
-      } else {
-        this.sidenavMode = "side";
-        this.sidenav && this.sidenav.open();
-      }
-    });
-  }
+  constructor(private breakpointObserver: BreakpointObserver) {}
 
   ngOnInit(): void {
 
+    this.breakpointObserver.observe('(max-width: 960px)').subscribe(result => {
+      if (result.matches) {
+        this.isSmallScreen = true;
+        this.sidenav.close();
+      } else {
+        this.isSmallScreen = false;
+        this.sidenav.open();
+      }
+    });
 
     // this.subject = webSocket('ws://localhost:8080/socket');
     //
