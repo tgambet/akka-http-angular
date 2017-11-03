@@ -11,7 +11,19 @@
 
   <div class="container">
     <div class="content">
-      <p>Content</p>
+      <mat-card>
+        <p>
+          <button mat-button (click)="openSocket()">OPEN SOCKET</button>
+          <span>Status: {{subject ? 'OPENED' : 'CLOSED'}}</span>
+        </p>
+        <p>
+          <mat-form-field class="full-width">
+            <input matInput #input placeholder="Send a message" value="test">
+          </mat-form-field>
+          <button mat-button (click)="sendMessage(input.value)">SEND</button>
+        </p>
+        <p *ngFor="let log of logs">{{log}}</p>
+      </mat-card>
     </div>
     <mat-toolbar class="footer">
       Footer

@@ -16,7 +16,11 @@ import { AppComponent } from './app.component';
     Material.MatMenuModule,
     Material.MatSidenavModule,
     Material.MatToolbarModule,
-    Material.MatIconModule
+    Material.MatIconModule,
+    Material.MatInputModule,
+    Material.MatFormFieldModule,
+    Material.MatButtonModule,
+    Material.MatCardModule
   ],
   providers: [
     MediaMatcher,
