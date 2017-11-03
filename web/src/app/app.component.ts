@@ -5,6 +5,8 @@ import { Subscription }                    from 'rxjs/Subscription'
 import * as Material                       from '@angular/material';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
+import { environment } from "../environments/environment";
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -47,9 +49,22 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  static getSocketUrl() {
+    let socketUrl: string = ""
+    socketUrl += window.location.protocol == "http:" ? "ws://" : "wss://";
+    socketUrl += window.location.hostname;
+    if (environment.production) {
+      socketUrl += ":" + window.location.port
+    } else {
+      socketUrl += ":8080"
+    }
+    socketUrl += "/socket"
+    return socketUrl
+  }
+
   openSocket() {
     if (!this.subject) {
-      this.subject = webSocket('ws://localhost:8080/socket');
+      this.subject = webSocket(AppComponent.getSocketUrl());
       if (this.subscription) {
         this.subscription.unsubscribe();
       }
