@@ -6,7 +6,11 @@ mat-sidenav-container {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  .content {
+    flex-grow: 1;
+  }
 }
-.content {
-  flex-grow: 1;
+
+mat-sidenav {
+  width: 240px;
 }
