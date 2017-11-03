@@ -17,6 +17,8 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
 class UserActor extends Actor with Stash with JsonSupport {
 
+  context.parent ! JsonMessage("ping", "Hello World!").toJson.toString()
+
   override def receive: Receive = {
     case message: String => {
       println(message)

@@ -21,6 +21,7 @@
             <input matInput #input placeholder="Send a message" value="test">
           </mat-form-field>
           <button mat-button (click)="sendMessage(input.value)">SEND</button>
+          <button mat-button (click)="logs = []">CLEAR</button>
         </p>
         <p *ngFor="let log of logs">{{log}}</p>
       </mat-card>
