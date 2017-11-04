@@ -27,22 +27,24 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 class UserActor extends Actor with Stash with JsonSupport {
   private val logger = Logging(context.system, this)
 
-  context.parent ! JsonMessage("ping", JsString("Hello World!")).toJson.compactPrint
+  context.parent ! JsonMessage("ping", JsString("Hello World!")).toJson
 
   override def receive: Receive = {
-//    case message: String => {
-//      println(message)
-//      JsonParser(message) match {
-//        case JsonMessage(_, _) => println("OK")
-//        case _ =>
-//      }
-//      sender() ! JsonMessage("pong", JsonParser(message)).toJson.compactPrint
-//    }
-    case JsString(str) => println(str)
-    case a: JsObject   => println("OK: " + a.prettyPrint)
-    case m => println(m)
+
+    case value: JsValue =>
+      handleMessages.applyOrElse(value, (v: JsValue) => logger.warning("Unhandled Json Message {}", v.prettyPrint))
+
+    case value =>
+      logger.error("UserActor should only receive Json Messages {}", value.toString)
+
   }
 
-  // handle ParsingException
+  def handleMessages: PartialFunction[JsValue, Unit] = {
+
+    case JsonMessage("HttpRequest", body) => sender() ! body
+
+    case a @ JsonMessage(_, _) => sender() ! a
+
+  }
 
 }

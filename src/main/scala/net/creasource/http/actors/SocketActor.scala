@@ -28,7 +28,7 @@ class SocketActor(userActorProps: Props)(implicit materializer: ActorMaterialize
         case BinaryMessage.Strict(_)         => // ignore
         case TextMessage.Streamed(stream)    => stream.runWith(Sink.ignore)
         case BinaryMessage.Streamed(stream)  => stream.runWith(Sink.ignore)
-        case msg: String if sender() == user => sourceActor ! TextMessage(msg)
+        case msg: JsValue if sender() == user => sourceActor ! TextMessage(msg.compactPrint)
         case Terminated(`user`) =>
           logger.info("UserActor terminated. Terminating.")
           sourceActor ! Status.Success(())
@@ -41,7 +41,7 @@ class SocketActor(userActorProps: Props)(implicit materializer: ActorMaterialize
           logger.error(cause, "Socket failed. Terminating.")
           sourceActor ! f
           context.stop(self)
-        case m => logger.warning(m.toString)
+        case m => logger.warning("Unsupported message: {}", m.toString)
       }
     case _ => stash()
   }
