@@ -11,7 +11,7 @@ import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-import net.creasource.http.actors.{SocketActor, SocketActorSupervisor}
+import net.creasource.http.actors.{SocketActor, SocketSupervisor}
 
 trait SocketWebServer extends WebServer { self: WebServer =>
 
@@ -21,7 +21,7 @@ trait SocketWebServer extends WebServer { self: WebServer =>
 
   private lazy val socketActorProps: Props = SocketActor.props(userActorProps)
   private lazy val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
-  private lazy val supervisor = system.actorOf(SocketActorSupervisor.props(), "sockets")
+  private lazy val supervisor = system.actorOf(SocketSupervisor.props(), "sockets")
 
   def socketFlow(socketActor: ActorRef): Flow[Message, Message, Unit] = {
     val flow: Flow[Message, Message, ActorRef] =

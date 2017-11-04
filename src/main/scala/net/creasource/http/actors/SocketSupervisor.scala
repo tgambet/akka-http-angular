@@ -4,11 +4,11 @@ import akka.actor.{Actor, OneForOneStrategy, Props, SupervisorStrategy}
 import akka.event.Logging
 import spray.json.JsonParser.ParsingException
 
-object SocketActorSupervisor {
-  def props(): Props = Props(new SocketActorSupervisor)
+object SocketSupervisor {
+  def props(): Props = Props(new SocketSupervisor)
 }
 
-class SocketActorSupervisor extends Actor {
+class SocketSupervisor extends Actor {
 
   private val logger = Logging(context.system, this)
 
