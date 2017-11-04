@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy }    from '@angular/core';
-import { HttpClient, HttpHeaders }                      from '@angular/common/http'
+import { HttpClient, HttpRequest }                      from '@angular/common/http'
 import { webSocket }                       from 'rxjs/observable/dom/webSocket'
 import { WebSocketSubject }                from 'rxjs/observable/dom/WebSocketSubject'
 import { Subscription }                    from 'rxjs/Subscription'
@@ -104,6 +104,15 @@ export class AppComponent implements OnInit, OnDestroy {
       .subscribe(data =>
         this.logs.push(JSON.stringify(data))
       );
+
+    let httpRequest: HttpRequest<null> = new HttpRequest("GET", "http://localhost:8080/api/get");
+
+    let request = {
+      method: "",
+      message: ""
+    };
+
+    this.subject.next(JSON.stringify(request))
   }
 
   postRequest(message: string) {
