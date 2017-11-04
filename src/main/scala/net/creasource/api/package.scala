@@ -10,16 +10,16 @@ import scala.util.Try
 
 package object api {
 
-  case class JsonMessage(method: String, body: JsValue)
+  case class JsonMessage(method: String, id: Int, entity: JsValue)
 
   object JsonMessage extends JsonSupport {
-    def unapply(arg: JsValue): Option[(String, JsValue)] = {
-      Try(arg.convertTo[JsonMessage]).toOption.map(m => (m.method, m.body))
+    def unapply(arg: JsValue): Option[(String, Int, JsValue)] = {
+      Try(arg.convertTo[JsonMessage]).toOption.map(m => (m.method, m.id, m.entity))
     }
   }
 
   trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-    implicit val jsonMessageFormat: RootJsonFormat[JsonMessage] = jsonFormat2(JsonMessage.apply)
+    implicit val jsonMessageFormat: RootJsonFormat[JsonMessage] = jsonFormat3(JsonMessage.apply)
     implicit val httpHeaderWriter: RootJsonWriter[HttpHeader] = new RootJsonWriter[HttpHeader] {
       override def write(obj: HttpHeader): JsValue = {
         JsObject(

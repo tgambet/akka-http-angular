@@ -36,9 +36,12 @@ class UserActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) exte
 
   def handleMessages: PartialFunction[JsValue, Unit] = {
 
-    case JsonMessage("HttpRequest", body) => toHttpResponse(body.convertTo[HttpRequest]) foreach (client ! _.toJson)
+    case JsonMessage("HttpRequest", id, entity) =>
+      toHttpResponse(entity.convertTo[HttpRequest]) foreach { response =>
+        client ! JsonMessage("HttpResponse", id, response.toJson).toJson
+      }
 
-    case a @ JsonMessage(_, _) => client ! a
+    case a @ JsonMessage(_, _, _) => client ! a
 
   }
 
