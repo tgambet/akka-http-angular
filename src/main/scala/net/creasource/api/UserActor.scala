@@ -13,10 +13,10 @@ import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
 object UserActor {
-  def props()(implicit materializer: ActorMaterializer): Props = Props(new UserActor())
+  def props(xhrRoutes: Route)(implicit materializer: ActorMaterializer): Props = Props(new UserActor(xhrRoutes))
 }
 
-class UserActor()(implicit materializer: ActorMaterializer) extends Actor with Stash with JsonSupport {
+class UserActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) extends Actor with Stash with JsonSupport {
 
   import context.dispatcher
 
@@ -36,15 +36,15 @@ class UserActor()(implicit materializer: ActorMaterializer) extends Actor with S
 
   def handleMessages: PartialFunction[JsValue, Unit] = {
 
-    case JsonMessage("HttpRequest", body) => toResponse(body.convertTo[HttpRequest]) foreach (client ! _.toJson)
+    case JsonMessage("HttpRequest", body) => toHttpResponse(body.convertTo[HttpRequest]) foreach (client ! _.toJson)
 
     case a @ JsonMessage(_, _) => client ! a
 
   }
 
-  def routes2Response: Route => HttpRequest => Future[HttpResponse] = (route) => (request) =>
-    route2HandlerFlow(route).runWith(Source[HttpRequest](Seq(request)), Sink.head)._2
+  val toHttpResponse: HttpRequest => Future[HttpResponse] = route2Response(xhrRoutes)
 
-  val toResponse: HttpRequest => Future[HttpResponse] = routes2Response(APIRoutes.routes)
+  def route2Response(route: Route)(implicit materializer: ActorMaterializer): HttpRequest => Future[HttpResponse] =
+    (request) => route2HandlerFlow(route).runWith(Source[HttpRequest](Seq(request)), Sink.head)._2
 
 }

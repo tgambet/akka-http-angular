@@ -16,7 +16,7 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   override implicit val system: ActorSystem = app.system
 
-  override val userActorProps: Props = UserActor.props()
+  override val userActorProps: Props = UserActor.props(APIRoutes.routes)
 
   private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
