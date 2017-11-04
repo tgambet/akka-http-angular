@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy }    from '@angular/core';
+import { HttpClient, HttpHeaders }                      from '@angular/common/http'
 import { webSocket }                       from 'rxjs/observable/dom/webSocket'
 import { WebSocketSubject }                from 'rxjs/observable/dom/WebSocketSubject'
 import { Subscription }                    from 'rxjs/Subscription'
@@ -27,7 +28,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logs: Array<string> = []
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private httpClient: HttpClient
+  ) {}
 
   ngOnInit(): void {
 
@@ -79,6 +83,10 @@ export class AppComponent implements OnInit, OnDestroy {
   sendMessage(message: string) {
     if (this.subject)
       this.subject.next(message);
+    else {
+      this.openSocket();
+      this.subject.next(message);
+    }
   }
 
   completeSocket() {
@@ -88,6 +96,27 @@ export class AppComponent implements OnInit, OnDestroy {
       this.subject.unsubscribe();
     this.subscription = null;
     this.subject = null;
+  }
+
+  getRequest() {
+    this.httpClient
+      .get("http://localhost:8080/api/get")
+      .subscribe(data =>
+        this.logs.push(JSON.stringify(data))
+      );
+  }
+
+  postRequest(message: string) {
+    let testObject = {
+      method: "POST",
+      body: message
+    };
+
+    this.httpClient
+      .post("http://localhost:8080/api/post", testObject)
+      .subscribe(data =>
+        this.logs.push(JSON.stringify(data))
+      )
   }
 
 }

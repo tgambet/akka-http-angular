@@ -25,6 +25,10 @@
           <button mat-button (click)="logs = []">CLEAR</button>
         </p>
         <p *ngFor="let log of logs">{{log}}</p>
+        <p>
+          <button mat-button (click)="getRequest()">GET</button>
+          <button mat-button (click)="postRequest(input.value)">POST</button>
+        </p>
       </mat-card>
     </div>
     <mat-toolbar class="footer">

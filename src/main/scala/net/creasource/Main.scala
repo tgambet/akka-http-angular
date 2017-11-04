@@ -1,10 +1,13 @@
 package net.creasource
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.Directives._
 
 import scala.io.StdIn
+
 import net.creasource.core.Application
-import net.creasource.api.UserActor
+import net.creasource.api._
 import net.creasource.http.{SPAWebServer, SocketWebServer}
 
 object Main extends App with SPAWebServer with SocketWebServer {
@@ -21,7 +24,7 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   start(host, port)
 
-  //override def routes: Route = complete(StatusCodes.OK, "OK") ~ super.routes
+  override def routes: Route = APIRoutes.routes ~ super.routes
 
   if (stopOnReturn) {
     system.log.info(s"Press RETURN to stop...")
