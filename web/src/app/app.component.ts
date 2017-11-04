@@ -80,12 +80,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendMessage(message: string) {
-    if (this.subject)
-      this.subject.next(message);
-    else {
+  sendMessage(message: any) {
+    if (this.subject) {
+      this.subject.next(JSON.stringify(message));
+    } else {
       this.openSocket();
-      this.subject.next(message);
+      this.subject.next(JSON.stringify(message));
     }
   }
 
@@ -105,14 +105,15 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logs.push(JSON.stringify(data))
       );
 
-    let httpRequest: HttpRequest<null> = new HttpRequest("GET", "http://localhost:8080/api/get");
-
     let request = {
-      method: "",
-      message: ""
+      method: "HttpRequest",
+      body: {
+        method: "GET",
+        url: "http://localhost:8080/api/get"
+      }
     };
 
-    this.subject.next(JSON.stringify(request))
+    this.sendMessage(request)
   }
 
   postRequest(message: string) {

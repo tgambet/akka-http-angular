@@ -6,6 +6,8 @@ import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 
+import spray.json._
+
 import scala.concurrent.duration._
 
 object SocketActor {
@@ -22,7 +24,7 @@ class SocketActor(userActorProps: Props)(implicit materializer: ActorMaterialize
       val user = context.watch(context.actorOf(userActorProps, "user"))
       unstashAll()
       context.become {
-        case TextMessage.Strict(data)        => user ! data
+        case TextMessage.Strict(data)        => user ! JsonParser(data)
         case BinaryMessage.Strict(_)         => // ignore
         case TextMessage.Streamed(stream)    => stream.runWith(Sink.ignore)
         case BinaryMessage.Streamed(stream)  => stream.runWith(Sink.ignore)

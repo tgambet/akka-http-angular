@@ -6,10 +6,12 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.{KillSwitches, OverflowStrategy, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
+import akka.util.Timeout
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import net.creasource.http.actors.SocketActor
+
+import net.creasource.http.actors.{SocketActor, SocketActorSupervisor}
 
 trait SocketWebServer extends WebServer { self: WebServer =>
 
@@ -20,23 +22,27 @@ trait SocketWebServer extends WebServer { self: WebServer =>
 
   private val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
 
-  def socketFlow: Flow[Message, Message, Any] = {
+  private lazy val supervisor = system.actorOf(SocketActorSupervisor.props(), "sockets")
 
-    val socketActor: ActorRef = system.actorOf(SocketActor.props(userActorProps))
+  def socketFlow: Future[Flow[Message, Message, Unit]] = {
+    import akka.pattern.ask
+    import scala.concurrent.ExecutionContext.Implicits.global
+    implicit val timeout: Timeout = 1.second
+    (supervisor ? SocketActor.props(userActorProps)).mapTo[ActorRef].map { socketActor =>
 
-    val flow: Flow[Message, Message, ActorRef] =
-      Flow.fromSinkAndSourceMat(
-        Sink.actorRef(socketActor, Status.Success(())),
-        Source.actorRef(1000, OverflowStrategy.fail)
-      )(Keep.right)
+      val flow: Flow[Message, Message, ActorRef] =
+        Flow.fromSinkAndSourceMat(
+          Sink.actorRef(socketActor, Status.Success(())),
+          Source.actorRef(1000, OverflowStrategy.fail)
+        )(Keep.right)
 
-    val flow2: Flow[Message, Message, Unit] = flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor)
+      val flow2: Flow[Message, Message, Unit] = flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor)
 
-    keepAliveMessage match {
-      case Some(message) => flow2.keepAlive(keepAliveTimeout, () => message)
-      case None          => flow2
+      keepAliveMessage match {
+        case Some(message) => flow2.keepAlive(keepAliveTimeout, () => message)
+        case None          => flow2
+      }
     }
-
   }
 
   override def stop(): Future[Unit] = {
@@ -48,7 +54,9 @@ trait SocketWebServer extends WebServer { self: WebServer =>
   override def routes: Route =
     path("socket") {
       extractUpgradeToWebSocket { _ =>
-        handleWebSocketMessages(socketFlow.via(socketsKillSwitch.flow))
+        onSuccess(socketFlow) { socketFlow =>
+          handleWebSocketMessages(socketFlow.via(socketsKillSwitch.flow))
+        }
       }
     } ~ super.routes
 
