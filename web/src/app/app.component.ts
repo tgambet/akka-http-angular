@@ -67,6 +67,18 @@ export class AppComponent implements OnInit, OnDestroy {
     return socketUrl
   }
 
+  static getAPIUrl(path: string) {
+    let url: string = "";
+    url += window.location.protocol + "//" + window.location.hostname;
+    if (environment.production) {
+      url += ":" + window.location.port
+    } else {
+      url += ":8080"
+    }
+    url += path;
+    return url
+  }
+
   openSocket() {
     if (!this.subject) {
       this.subject = webSocket(AppComponent.getSocketUrl());
@@ -100,7 +112,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   getRequest() {
     this.httpClient
-      .get("http://localhost:8080/api/get")
+      .get(AppComponent.getAPIUrl("/api/get"))
       .subscribe(data =>
         this.logs.push(JSON.stringify(data))
       );
@@ -109,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
       method: "HttpRequest",
       entity: {
         method: "GET",
-        url: "http://localhost:8080/api/get"
+        url: AppComponent.getAPIUrl("/api/get")
       },
       id: this.id++
     };
@@ -125,17 +137,17 @@ export class AppComponent implements OnInit, OnDestroy {
       method: "HttpRequest",
       entity: {
         method: "POST",
-        url: "http://localhost:8080/api/post",
+        url: AppComponent.getAPIUrl("/api/post"),
         entity: message
       },
       id: this.id++
     };
 
     this.httpClient
-      .post("http://localhost:8080/api/post", request)
+      .post(AppComponent.getAPIUrl("/api/post"), request)
       .subscribe(data =>
         this.logs.push(JSON.stringify(data))
-      )
+      );
 
     this.sendMessage(request)
   }
