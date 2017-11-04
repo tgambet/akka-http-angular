@@ -15,7 +15,7 @@
         <p>
           <button *ngIf="!subject" mat-button (click)="openSocket()">OPEN SOCKET</button>
           <button *ngIf="subject" mat-button (click)="completeSocket()">CLOSE SOCKET</button>
-          <span>Status: {{subject ? 'OPENED' : 'CLOSED'}}</span>
+          <span>Status: {{subject ? 'OPEN' : 'CLOSED'}}</span>
         </p>
         <p>
           <mat-form-field class="full-width">

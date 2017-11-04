@@ -5,10 +5,11 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
 
 import scala.io.StdIn
-
 import net.creasource.core.Application
 import net.creasource.api._
 import net.creasource.http.{SPAWebServer, SocketWebServer}
+
+import scala.concurrent.duration._
 
 object Main extends App with SPAWebServer with SocketWebServer {
 
@@ -20,7 +21,10 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
-  private val stopOnReturn = app.conf.getBoolean("http.stopOnReturn")
+  private val keepAliveInSec = app.conf.getInt("http.webSocket.keep-alive")
+  private val stopOnReturn = app.conf.getBoolean("http.stop-on-return")
+
+  override val keepAliveTimeout: FiniteDuration = keepAliveInSec.seconds
 
   start(host, port)
 
