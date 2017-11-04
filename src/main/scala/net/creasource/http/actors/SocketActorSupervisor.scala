@@ -16,10 +16,8 @@ class SocketActorSupervisor extends Actor {
     case props: Props => sender() ! context.actorOf(props)
   }
 
-  import scala.concurrent.duration._
-
   override val supervisorStrategy: OneForOneStrategy =
-    OneForOneStrategy(maxNrOfRetries = 5, withinTimeRange = 1.minute, loggingEnabled = true) {
+    OneForOneStrategy(loggingEnabled = true) {
       case p: ParsingException =>
         logger.error(p, "Sent message was not a correct json message. Resuming.")
         SupervisorStrategy.Resume
