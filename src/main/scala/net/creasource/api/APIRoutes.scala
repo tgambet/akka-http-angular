@@ -1,6 +1,6 @@
 package net.creasource.api
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, StatusCodes}
 import akka.http.scaladsl.server.Directives._
@@ -10,8 +10,6 @@ import spray.json.{JsString, JsValue}
 import scala.collection.immutable.Seq
 
 object APIRoutes {
-
-  import SprayJsonSupport._
 
   def routes: Route = {
     pathPrefix("api") {

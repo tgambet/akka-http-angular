@@ -116,17 +116,23 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sendMessage(request)
   }
 
-  postRequest(message: string) {
-    let testObject = {
-      method: "POST",
-      body: message
+  postRequest(message: any) {
+    let request = {
+      method: "HttpRequest",
+      body: {
+        method: "POST",
+        url: "http://localhost:8080/api/post",
+        entity: message
+      }
     };
 
     this.httpClient
-      .post("http://localhost:8080/api/post", testObject)
+      .post("http://localhost:8080/api/post", request)
       .subscribe(data =>
         this.logs.push(JSON.stringify(data))
       )
+
+    this.sendMessage(request)
   }
 
 }
