@@ -9,17 +9,17 @@ import akka.stream.scaladsl.Sink
 import scala.concurrent.duration._
 
 object SocketActor {
-  def props()(implicit materializer: ActorMaterializer): Props = Props(new SocketActor())
+  def props(userActorProps: Props)(implicit materializer: ActorMaterializer): Props = Props(new SocketActor(userActorProps))
 }
 
-class SocketActor()(implicit materializer: ActorMaterializer) extends Actor with Stash {
+class SocketActor(userActorProps: Props)(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
   logger.info("Socket opened. Actor created.")
 
   override def receive: Receive = {
     case sourceActor: ActorRef =>
-      val user = context.watch(context.actorOf(UserActor.props(), "user"))
+      val user = context.watch(context.actorOf(userActorProps, "user"))
       unstashAll()
       context.become {
         case TextMessage.Strict(data)        => user ! data

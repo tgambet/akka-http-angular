@@ -1,4 +1,4 @@
-package net.creasource.http.actors
+package net.creasource.api
 
 import akka.actor.{Actor, Props, Stash}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -17,12 +17,12 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
 class UserActor extends Actor with Stash with JsonSupport {
 
-  context.parent ! JsonMessage("ping", "Hello World!").toJson.toString()
+  context.parent ! JsonMessage("ping", "Hello World!").toJson.compactPrint
 
   override def receive: Receive = {
     case message: String => {
       println(message)
-      sender() ! JsonMessage("pong", message).toJson.toString()
+      sender() ! JsonMessage("pong", message).toJson.compactPrint
     }
   }
 

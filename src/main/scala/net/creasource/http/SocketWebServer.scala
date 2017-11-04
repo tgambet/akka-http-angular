@@ -1,18 +1,19 @@
 package net.creasource.http
 
-import akka.actor.{ActorRef, ActorSystem, Status}
+import akka.actor.{ActorRef, Props, Status}
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
+import akka.stream.{KillSwitches, OverflowStrategy, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
-
 import net.creasource.http.actors.SocketActor
 
 trait SocketWebServer extends WebServer { self: WebServer =>
+
+  protected val userActorProps: Props
 
   protected val keepAliveMessage: Option[TextMessage] = Some(TextMessage("""{"method":"keepAlive"}"""))
   protected val keepAliveTimeout: FiniteDuration = 1.minute
@@ -21,7 +22,7 @@ trait SocketWebServer extends WebServer { self: WebServer =>
 
   def socketFlow: Flow[Message, Message, Any] = {
 
-    val socketActor: ActorRef = system.actorOf(SocketActor.props())
+    val socketActor: ActorRef = system.actorOf(SocketActor.props(userActorProps))
 
     val flow: Flow[Message, Message, ActorRef] =
       Flow.fromSinkAndSourceMat(
