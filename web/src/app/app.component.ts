@@ -71,7 +71,8 @@ export class AppComponent implements OnInit, OnDestroy {
     let url: string = "";
     url += window.location.protocol + "//" + window.location.hostname;
     if (environment.production) {
-      url += ":" + window.location.port
+      if (window.location.port)
+        url += ":" + window.location.port
     } else {
       url += ":8080"
     }
