@@ -1,18 +1,23 @@
 package net.creasource.http
 
 import akka.actor.{ActorRef, ActorSystem, Status}
-import akka.http.scaladsl.model.ws.Message
+import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.{ActorMaterializer, KillSwitches, OverflowStrategy, SharedKillSwitch}
 import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
-import net.creasource.http.actors.SocketActor
 
 import scala.concurrent.Future
+import scala.concurrent.duration._
+
+import net.creasource.http.actors.SocketActor
 
 trait SocketWebServer extends WebServer { self: WebServer =>
 
-  protected val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
+  protected val keepAliveMessage: Option[TextMessage] = Some(TextMessage("""{"method":"keepAlive"}"""))
+  protected val keepAliveTimeout: FiniteDuration = 1.minute
+
+  private val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
 
   def socketFlow: Flow[Message, Message, Any] = {
 
@@ -24,7 +29,13 @@ trait SocketWebServer extends WebServer { self: WebServer =>
         Source.actorRef(1000, OverflowStrategy.fail)
       )(Keep.right)
 
-    flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor)
+    val flow2: Flow[Message, Message, Unit] = flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor)
+
+    keepAliveMessage match {
+      case Some(message) => flow2.keepAlive(keepAliveTimeout, () => message)
+      case None          => flow2
+    }
+
   }
 
   override def stop(): Future[Unit] = {

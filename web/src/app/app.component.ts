@@ -44,13 +44,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.subscription) {
+    if (this.subscription)
       this.subscription.unsubscribe();
-    }
+    if (this.subject)
+      this.subject.unsubscribe()
   }
 
   static getSocketUrl() {
-    let socketUrl: string = ""
+    let socketUrl: string = "";
     socketUrl += window.location.protocol == "http:" ? "ws://" : "wss://";
     socketUrl += window.location.hostname;
     if (environment.production) {
@@ -58,22 +59,19 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       socketUrl += ":8080"
     }
-    socketUrl += "/socket"
+    socketUrl += "/socket";
     return socketUrl
   }
 
   openSocket() {
     if (!this.subject) {
       this.subject = webSocket(AppComponent.getSocketUrl());
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
       this.subscription =
         this.subject
           .subscribe(
             (msg) => this.logs.push(JSON.stringify(msg)),
-            (err) => this.subject = null,
-            () => this.subject = null
+            (err) => { console.log(err); this.completeSocket() },
+            () => this.completeSocket()
           );
     }
   }
@@ -81,6 +79,15 @@ export class AppComponent implements OnInit, OnDestroy {
   sendMessage(message: string) {
     if (this.subject)
       this.subject.next(message);
+  }
+
+  completeSocket() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.subject)
+      this.subject.unsubscribe();
+    this.subscription = null;
+    this.subject = null;
   }
 
 }

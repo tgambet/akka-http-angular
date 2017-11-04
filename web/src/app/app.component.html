@@ -13,7 +13,8 @@
     <div class="content">
       <mat-card>
         <p>
-          <button mat-button (click)="openSocket()">OPEN SOCKET</button>
+          <button *ngIf="!subject" mat-button (click)="openSocket()">OPEN SOCKET</button>
+          <button *ngIf="subject" mat-button (click)="completeSocket()">CLOSE SOCKET</button>
           <span>Status: {{subject ? 'OPENED' : 'CLOSED'}}</span>
         </p>
         <p>
