@@ -3,7 +3,6 @@ package net.creasource
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model._
 import akka.util.ByteString
-import spray.json.{DefaultJsonProtocol, JsArray, JsNumber, JsObject, JsString, JsValue, RootJsonFormat, RootJsonReader, RootJsonWriter}
 import spray.json._
 
 import scala.util.Try
