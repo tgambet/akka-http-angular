@@ -29,11 +29,11 @@ object Main extends App with SPAWebServer with SocketWebServer {
   override def routes: Route = APIRoutes.routes ~ super.routes
 
   start(host, port) foreach { _ =>
-    //if (stopOnReturn) {
+    if (stopOnReturn) {
       system.log.info(s"Press RETURN to stop...")
       StdIn.readLine()
       stop().onComplete(_ => app.shutdown())
-    //}
+    }
   }
 
 }
