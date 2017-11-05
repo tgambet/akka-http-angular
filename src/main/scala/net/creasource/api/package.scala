@@ -30,7 +30,8 @@ package object api {
     implicit val httpResponseFormat: RootJsonWriter[HttpResponse] = new RootJsonWriter[HttpResponse] {
       override def write(obj: HttpResponse): JsValue =
         JsObject(
-          "status" -> JsNumber(obj.status.intValue),
+          "status"     -> JsNumber(obj.status.intValue),
+          "statusText" -> JsString(obj.status.reason),
           "entity" -> (obj.entity match {
             case HttpEntity.Strict(ct @ ContentTypes.`application/json`, body)  => JsonParser(body.decodeString(ct.charset.value))
             case HttpEntity.Strict(ct @ ContentTypes.`text/plain(UTF-8)`, body) => JsString(body.decodeString(ct.charset.value))

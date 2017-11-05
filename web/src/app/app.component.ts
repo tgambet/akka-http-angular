@@ -62,9 +62,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   getRequest() {
     this.httpSocketClient.get("/api/get")
-      .subscribe(data => {
-          this.logs.push("GET: " + JSON.stringify(data))
-        }
+      .subscribe(
+        data => this.logs.push("GET: " + JSON.stringify(data)),
+        error => console.log(error),
+        () => {}
       )
   }
 

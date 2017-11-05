@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy}       from '@angular/core';
-import {HttpClient}       from '@angular/common/http'
+import {HttpClient, HttpErrorResponse}       from '@angular/common/http'
 import {environment}      from "../../environments/environment";
 
 import * as Rx from 'rxjs'
@@ -102,6 +102,14 @@ export class HttpSocketClientService implements OnDestroy {
       this.getSocket()
         .filter(r => r["id"] == request["id"])
         .map(r => r["entity"])
+        .map(r => {
+          let status = r["status"];
+          let statusText = r["statusText"];
+          let entity = r["entity"];
+          if (status >= 400)
+            throw new HttpErrorResponse({ error: entity, status: status, statusText: statusText, url: request["entity"]["url"]});
+          return entity;
+        })
         .take(1);
     let sendRequest = Rx.Observable.create(observer => {
       this.send(request);

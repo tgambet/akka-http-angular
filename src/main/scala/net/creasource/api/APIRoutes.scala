@@ -5,16 +5,20 @@ import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.settings.RoutingSettings
+import com.typesafe.config.{Config, ConfigFactory}
 import spray.json.{JsString, JsValue}
 
 import scala.collection.immutable.Seq
 
 object APIRoutes {
 
+  implicit val settings: RoutingSettings = RoutingSettings.apply(ConfigFactory.load())
+
   def routes: Route = {
     pathPrefix("api") {
       respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
-        concat(
+        Route.seal(concat(
           get {
             pathPrefix("get") {
               complete(JsString("OK GET"))
@@ -42,7 +46,7 @@ object APIRoutes {
               complete(StatusCodes.OK)
             }
           }
-        )
+        ))
       }
     }
   }
