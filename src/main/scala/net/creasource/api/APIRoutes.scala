@@ -16,7 +16,9 @@ object APIRoutes {
       respondWithHeader(RawHeader("Access-Control-Allow-Origin", "*")) {
         concat(
           get {
-            complete(JsString("OK GET"))
+            pathPrefix("get") {
+              complete(JsString("OK GET"))
+            }
           },
           post {
             entity(as[JsValue]) { json =>

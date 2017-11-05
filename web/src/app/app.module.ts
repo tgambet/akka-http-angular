@@ -6,6 +6,7 @@ import * as Material               from '@angular/material';
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
 
 import { AppComponent } from './app.component';
+import { HttpSocketClientService } from "./services/http-socket-client.service";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { AppComponent } from './app.component';
   ],
   providers: [
     MediaMatcher,
-    BreakpointObserver
+    BreakpointObserver,
+    HttpSocketClientService
   ],
   bootstrap: [AppComponent]
 })
