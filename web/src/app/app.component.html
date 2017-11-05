@@ -12,6 +12,7 @@
   <div class="container">
     <div class="content">
       <mat-card>
+        <h1>WebSocket</h1>
         <p>
           <button *ngIf="!httpSocketClient.isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
           <button *ngIf="httpSocketClient.isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>

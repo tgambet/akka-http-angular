@@ -56,7 +56,7 @@ package object api {
             }
             val uri = js.fields.get("url") match {
               case Some(JsString(url)) => Uri(url)
-              case _ => throw new UnsupportedOperationException(s"No url or malformed url parameter found.")
+              case _ => throw new UnsupportedOperationException(s"No string url parameter found.")
             }
             val entity = js.fields.get("entity") match {
               case None => HttpEntity.Empty

@@ -43,6 +43,11 @@ export class HttpSocketClientService implements OnDestroy {
   getSocket(): Rx.Subject<string> {
     if (!this.socket) {
       this.socket = Rx.Observable.webSocket(HttpSocketClientService.getSocketUrl());
+      this.socket.subscribe(
+        (next)=> {},
+        (error)=> this.closeSocket(),
+        () => this.closeSocket()
+      )
     }
     return this.socket;
   }

@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(message: any) {
-    this.httpSocketClient.send(JSON.stringify(message));
+    this.httpSocketClient.send({message: message});
   }
 
   getRequest() {

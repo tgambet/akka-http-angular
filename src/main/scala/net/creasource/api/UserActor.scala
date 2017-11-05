@@ -43,6 +43,10 @@ class UserActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) exte
 
     case a @ JsonMessage(_, _, _) => client ! a
 
+    case str: JsString => client ! str
+
+    case obj: JsObject => client ! obj
+
   }
 
   val toHttpResponse: HttpRequest => Future[HttpResponse] = route2Response(xhrRoutes)
