@@ -13,9 +13,9 @@
     <div class="content">
       <mat-card>
         <p>
-          <button *ngIf="!subject" mat-button (click)="openSocket()">OPEN SOCKET</button>
-          <button *ngIf="subject" mat-button (click)="completeSocket()">CLOSE SOCKET</button>
-          <span>Status: {{subject ? 'OPEN' : 'CLOSED'}}</span>
+          <button *ngIf="!httpSocketClient.isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
+          <button *ngIf="httpSocketClient.isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
+          <span>Status: {{httpSocketClient.isSocketOpen() ? 'OPEN' : 'CLOSED'}}</span>
         </p>
         <p>
           <mat-form-field class="full-width">
@@ -24,11 +24,11 @@
           <button mat-button (click)="sendMessage(input.value)">SEND</button>
           <button mat-button (click)="logs = []">CLEAR</button>
         </p>
-        <p *ngFor="let log of logs">{{log}}</p>
         <p>
           <button mat-button (click)="getRequest()">GET</button>
-          <button mat-button (click)="postRequest(input.value)">POST</button>
+          <button mat-button (click)="postRequest(input)">POST</button>
         </p>
+        <p *ngFor="let log of logs">{{log}}</p>
       </mat-card>
     </div>
     <mat-toolbar class="footer">

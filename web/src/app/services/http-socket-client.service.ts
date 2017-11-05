@@ -9,9 +9,7 @@ export class HttpSocketClientService implements OnDestroy {
 
   constructor(private httpClient: HttpClient) { }
 
-  private socketSubject: Rx.Subject<string>;
-
-  private socketSubscription: Rx.Subscription;
+  private socket: Rx.Subject<string>;
 
   private id: number = 0;
 
@@ -43,83 +41,74 @@ export class HttpSocketClientService implements OnDestroy {
   }
 
   getSocket(): Rx.Subject<string> {
-    if (!this.socketSubject) {
-      this.socketSubject = Rx.Observable.webSocket(HttpSocketClientService.getSocketUrl());
-      this.socketSubscription = this.socketSubject
-        .subscribe(
-          (msg) => {},
-          (err) => { console.log(err); this.completeSocket() },
-          () => this.completeSocket()
-        );
+    if (!this.socket) {
+      this.socket = Rx.Observable.webSocket(HttpSocketClientService.getSocketUrl());
     }
-    return this.socketSubject;
+    return this.socket;
+  }
+
+  closeSocket(): void {
+    this.socket && this.socket.unsubscribe();
+    this.socket = null;
+  }
+
+  isSocketOpen(): boolean {
+    return this.socket != null;
   }
 
   send(message: any): void {
     this.getSocket().next(JSON.stringify(message));
   }
 
-  private completeSocket() {
-    if (this.socketSubscription)
-      this.socketSubscription.unsubscribe();
-    if (this.socketSubject)
-      this.socketSubject.unsubscribe();
-    this.socketSubject = null;
-  }
-
   ngOnDestroy(): void {
-    this.completeSocket();
+    this.closeSocket();
   }
 
   get(path: string): Rx.Observable<Object> {
-
-    if (!this.socketSubject) {
-      return this.httpClient
-        .get(HttpSocketClientService.getAPIUrl(path))
+    if (!this.socket) {
+      return this.httpClient.get(HttpSocketClientService.getAPIUrl(path))
     } else {
-      let requestId = this.id++
       let request = {
         method: "HttpRequest",
         entity: {
           method: "GET",
           url: HttpSocketClientService.getAPIUrl(path)
         },
-        id: requestId
+        id: this.id++
       };
-      let expectResponse = this.getSocket().filter(s => s["id"] == requestId).take(1);
-      let sendRequest = Rx.Observable.create(observer => {
-        this.send(request);
-        observer.complete();
-        return () => {}
-      });
-
-      return sendRequest.concat(expectResponse)
-
+      return this.sendRequest(request)
     }
-
   }
 
+  post(path: string, entity: Object): Rx.Observable<Object> {
+    if (!this.socket) {
+      return this.httpClient.post(HttpSocketClientService.getAPIUrl(path), entity)
+    } else {
+      let request = {
+        method: "HttpRequest",
+        entity: {
+          method: "POST",
+          url: HttpSocketClientService.getAPIUrl(path),
+          entity: entity
+        },
+        id: this.id++
+      };
+      return this.sendRequest(request)
+    }
+  }
 
-
-  // postRequest(message: any) {
-  //
-  //   let request = {
-  //     method: "HttpRequest",
-  //     entity: {
-  //       method: "POST",
-  //       url: AppComponent.getAPIUrl("/api/post"),
-  //       entity: message
-  //     },
-  //     id: this.id++
-  //   };
-  //
-  //   this.httpClient
-  //     .post(AppComponent.getAPIUrl("/api/post"), request)
-  //     .subscribe(data =>
-  //       this.logs.push(JSON.stringify(data))
-  //     );
-  //
-  //   this.sendMessage(request)
-  // }
+  private sendRequest(request: Object): Rx.Observable<Object> {
+    let expectResponse =
+      this.getSocket()
+        .filter(r => r["id"] == request["id"])
+        .map(r => r["entity"])
+        .take(1);
+    let sendRequest = Rx.Observable.create(observer => {
+      this.send(request);
+      observer.complete();
+      return () => {}
+    });
+    return sendRequest.concat(expectResponse)
+  }
 
 }
