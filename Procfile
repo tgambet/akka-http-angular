@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/akka-angular-seed -Dhttp.port=${PORT} -Dhttp.stopOnReturn=false
+web: target/universal/stage/bin/akka-angular-seed -Dhttp.port=${PORT} -Dhttp.stop-on-return=false
