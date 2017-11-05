@@ -31,11 +31,11 @@ package object api {
       override def write(obj: HttpResponse): JsValue =
         JsObject(
           "status" -> JsNumber(obj.status.intValue),
-          "entity" -> JsonParser(obj.entity match {
-            case HttpEntity.Strict(ct @ ContentTypes.`application/json`, body)  => body.decodeString(ct.charset.value)
-            case HttpEntity.Strict(ct @ ContentTypes.`text/plain(UTF-8)`, body) => body.decodeString(ct.charset.value)
+          "entity" -> (obj.entity match {
+            case HttpEntity.Strict(ct @ ContentTypes.`application/json`, body)  => JsonParser(body.decodeString(ct.charset.value))
+            case HttpEntity.Strict(ct @ ContentTypes.`text/plain(UTF-8)`, body) => JsString(body.decodeString(ct.charset.value))
             case _ => throw new UnsupportedOperationException("Only strict application/json and text/plain endpoints are supported.")
-          }),
+          })
           //"headers" -> JsArray(obj.headers.map(_.toJson).toVector)
         )
     }
