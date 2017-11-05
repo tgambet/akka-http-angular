@@ -15,19 +15,19 @@ trait WebServer {
 
   implicit lazy val materializer: ActorMaterializer = ActorMaterializer()
 
-  implicit private lazy val dispatcher: ExecutionContext = system.dispatcher
+  implicit protected lazy val dispatcher: ExecutionContext = system.dispatcher
 
   private var bindingFuture: Future[Http.ServerBinding] = _
 
   def routes: Route = reject
 
-  def start(host: String, port: Int) {
+  def start(host: String, port: Int): Future[Unit] = {
     bindingFuture = Http().bindAndHandle(route2HandlerFlow(routes), host, port)
-    bindingFuture.foreach { _ =>
-      system.log.info("Server online at http://{}:{}/", host, port)
-    }
     bindingFuture.failed.foreach { ex =>
       system.log.error(ex, "Failed to bind to {}:{}!", host, port)
+    }
+    bindingFuture map { _ =>
+      system.log.info("Server online at http://{}:{}/", host, port)
     }
   }
 

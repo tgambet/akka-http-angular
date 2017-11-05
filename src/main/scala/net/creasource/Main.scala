@@ -21,20 +21,19 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
-  private val keepAliveInSec = app.conf.getInt("http.webSocket.keep-alive")
   private val stopOnReturn = app.conf.getBoolean("http.stop-on-return")
+  private val keepAliveInSec = app.conf.getInt("http.webSocket.keep-alive")
 
   override val keepAliveTimeout: FiniteDuration = keepAliveInSec.seconds
 
-  start(host, port)
-
   override def routes: Route = APIRoutes.routes ~ super.routes
 
-  if (stopOnReturn) {
-    system.log.info(s"Press RETURN to stop...")
-    StdIn.readLine()
-    import system.dispatcher
-    stop().onComplete(_ => app.shutdown())
+  start(host, port) foreach { _ =>
+    //if (stopOnReturn) {
+      system.log.info(s"Press RETURN to stop...")
+      StdIn.readLine()
+      stop().onComplete(_ => app.shutdown())
+    //}
   }
 
 }
