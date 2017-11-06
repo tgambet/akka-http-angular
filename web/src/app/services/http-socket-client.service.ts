@@ -1,15 +1,20 @@
-import {Injectable, OnDestroy}       from '@angular/core';
-import {HttpClient, HttpErrorResponse}       from '@angular/common/http'
-import {environment}      from "../../environments/environment";
+import {Injectable, OnDestroy}         from '@angular/core';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http'
+import {environment}                   from "../../environments/environment";
 
-import * as Rx from 'rxjs'
+import {Subject}    from 'rxjs/Subject'
+import {Observable} from 'rxjs/Observable'
+import {webSocket}  from 'rxjs/observable/dom/webSocket'
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
 
 @Injectable()
 export class HttpSocketClientService implements OnDestroy {
 
   constructor(private httpClient: HttpClient) { }
 
-  private socket: Rx.Subject<string>;
+  private socket: Subject<string>;
 
   private id: number = 0;
 
@@ -40,9 +45,9 @@ export class HttpSocketClientService implements OnDestroy {
     return url
   }
 
-  getSocket(): Rx.Subject<Object> {
+  getSocket(): Subject<Object> {
     if (!this.socket) {
-      this.socket = Rx.Observable.webSocket(HttpSocketClientService.getSocketUrl());
+      this.socket = webSocket(HttpSocketClientService.getSocketUrl());
       this.socket.subscribe(
         (next)=> {},
         (error)=> this.closeSocket(),
@@ -69,7 +74,7 @@ export class HttpSocketClientService implements OnDestroy {
     this.closeSocket();
   }
 
-  get(path: string): Rx.Observable<Object> {
+  get(path: string): Observable<Object> {
     if (!this.socket) {
       return this.httpClient.get(HttpSocketClientService.getAPIUrl(path))
     } else {
@@ -85,7 +90,7 @@ export class HttpSocketClientService implements OnDestroy {
     }
   }
 
-  post(path: string, entity: Object): Rx.Observable<Object> {
+  post(path: string, entity: Object): Observable<Object> {
     if (!this.socket) {
       return this.httpClient.post(HttpSocketClientService.getAPIUrl(path), entity)
     } else {
@@ -102,7 +107,7 @@ export class HttpSocketClientService implements OnDestroy {
     }
   }
 
-  private sendRequest(request: HttpRequest): Rx.Observable<Object> {
+  private sendRequest(request: HttpRequest): Observable<Object> {
     let expectResponse =
       this.getSocket()
         .filter((r: HttpResponse) => r.method == "HttpResponse" && r.id == request.id)
@@ -115,7 +120,7 @@ export class HttpSocketClientService implements OnDestroy {
           return entity;
         })
         .take(1);
-    let sendRequest = Rx.Observable.create(observer => {
+    let sendRequest = Observable.create(observer => {
       this.send(request);
       observer.complete();
       return () => {}

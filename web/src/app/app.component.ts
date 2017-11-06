@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as Material                             from '@angular/material';
 import {BreakpointObserver}                      from '@angular/cdk/layout';
-import * as Rx from 'rxjs'
+import {Subscription} from 'rxjs/Subscription'
 
 import {HttpSocketClientService}                 from "./services/http-socket-client.service";
 
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isSmallScreen: boolean;
 
-  socket: Rx.Subscription;
+  socket: Subscription;
 
   logs: Array<string> = [];
 
@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.socket && this.socket.unsubscribe()
   }
 
-  openSocket(): Rx.Subject<Object> {
+  openSocket() {
     if (!this.socket)
       this.socket = this.httpSocketClient.getSocket().subscribe(
         (msg)=> this.logs.push("socket: " + JSON.stringify(msg)),
