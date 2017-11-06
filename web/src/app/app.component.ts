@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.socket && this.socket.unsubscribe()
   }
 
-  openSocket(): Rx.Subject<string> {
+  openSocket(): Rx.Subject<Object> {
     if (!this.socket)
       this.socket = this.httpSocketClient.getSocket().subscribe(
         (msg)=> this.logs.push("socket: " + JSON.stringify(msg)),
