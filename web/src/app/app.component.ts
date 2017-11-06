@@ -63,8 +63,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.openSocket().next(JSON.stringify({message: message}));
   }
 
-  getRequest() {
-    this.httpSocketClient.get("/api/get")
+  getRequest(endpoint: string) {
+    this.httpSocketClient.get(endpoint)
       .subscribe(
         data => this.logs.push("GET: " + JSON.stringify(data)),
         error => console.log(error),
@@ -72,8 +72,8 @@ export class AppComponent implements OnInit, OnDestroy {
       )
   }
 
-  postRequest(entity: Object) {
-    this.httpSocketClient.post("/api/post", entity)
+  postRequest(endpoint: string, entity: Object) {
+    this.httpSocketClient.post(endpoint, entity)
       .subscribe(data => {
           this.logs.push("POST: " + JSON.stringify(data))
         }

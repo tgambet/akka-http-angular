@@ -35,8 +35,11 @@
       <mat-card>
         <h1>XHR Requests</h1>
         <p>
-          <button mat-button (click)="getRequest()">GET</button>
-          <button mat-button (click)="postRequest(input)">POST</button>
+          <mat-form-field class="full-width">
+            <input matInput #endpoint placeholder="Endpoint" value="/api/get">
+          </mat-form-field>
+          <button mat-button (click)="getRequest(endpoint.value)">GET</button>
+          <button mat-button (click)="postRequest(endpoint.value, input)">POST</button>
         </p>
       </mat-card>
     </div>
