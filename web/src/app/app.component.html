@@ -11,37 +11,39 @@
 
   <div class="container">
     <div class="content">
-      <mat-card>
-        <h1>Logs</h1>
-        <div class="logs">
-          <p *ngFor="let log of logs.reverse()">{{log}}</p>
-        </div>
-        <button mat-button (click)="logs = []">CLEAR</button>
-      </mat-card>
-      <mat-card>
-        <h1>WebSocket</h1>
-        <p>
-          <button *ngIf="!isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
-          <button *ngIf="isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
-          <span>Status: {{isSocketOpen() ? 'OPEN' : 'CLOSED'}}</span>
-        </p>
-        <p>
-          <mat-form-field class="full-width">
-            <input matInput #input placeholder="Send a message" value="test">
-          </mat-form-field>
-          <button mat-button (click)="sendMessage(input.value)">SEND</button>
-        </p>
-      </mat-card>
-      <mat-card>
-        <h1>XHR Requests</h1>
-        <p>
-          <mat-form-field class="full-width">
-            <input matInput #endpoint placeholder="Endpoint" value="/api/get">
-          </mat-form-field>
-          <button mat-button (click)="getRequest(endpoint.value)">GET</button>
-          <button mat-button (click)="postRequest(endpoint.value, input)">POST</button>
-        </p>
-      </mat-card>
+      <div class="cards">
+        <mat-card>
+          <h1>Logs</h1>
+          <div class="logs">
+            <p *ngFor="let log of logs.reverse()">{{log}}</p>
+          </div>
+          <button mat-button (click)="logs = []">CLEAR</button>
+        </mat-card>
+        <mat-card>
+          <h1>WebSocket</h1>
+          <p>
+            <button *ngIf="!isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
+            <button *ngIf="isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
+            <span>Status: {{isSocketOpen() ? 'OPEN' : 'CLOSED'}}</span>
+          </p>
+          <p>
+            <mat-form-field class="full-width">
+              <input matInput #input placeholder="Send a message" value="test">
+            </mat-form-field>
+            <button mat-button (click)="sendMessage(input.value)">SEND</button>
+          </p>
+        </mat-card>
+        <mat-card>
+          <h1>XHR Requests</h1>
+          <p>
+            <mat-form-field class="full-width">
+              <input matInput #endpoint placeholder="Endpoint" value="/api/get">
+            </mat-form-field>
+            <button mat-button (click)="getRequest(endpoint.value)">GET</button>
+            <button mat-button (click)="postRequest(endpoint.value, input)">POST</button>
+          </p>
+        </mat-card>
+      </div>
     </div>
     <mat-toolbar class="footer">
       Footer
