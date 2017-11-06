@@ -15,9 +15,11 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   implicit val app: Application = Application()
 
+  val apiRoutes = new APIRoutes(app)
+
   override implicit val system: ActorSystem = app.system
 
-  override val socketActorProps: Props = SocketActor.props(xhrRoutes = APIRoutes.routes)
+  override val socketActorProps: Props = SocketActor.props(xhrRoutes = apiRoutes.routes)
 
   private val host = app.conf.getString("http.host")
   private val port = app.conf.getInt("http.port")
@@ -26,7 +28,7 @@ object Main extends App with SPAWebServer with SocketWebServer {
 
   override val keepAliveTimeout: FiniteDuration = keepAliveInSec.seconds
 
-  override def routes: Route = APIRoutes.routes ~ super.routes
+  override def routes: Route = apiRoutes.routes ~ super.routes
 
   start(host, port) foreach { _ =>
     if (stopOnReturn) {

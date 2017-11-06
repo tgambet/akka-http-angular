@@ -6,14 +6,14 @@ import akka.http.scaladsl.model.{HttpHeader, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.settings.RoutingSettings
-import com.typesafe.config.{Config, ConfigFactory}
+import net.creasource.core.Application
 import spray.json.{JsString, JsValue}
 
 import scala.collection.immutable.Seq
 
-object APIRoutes {
+class APIRoutes(application: Application) {
 
-  implicit val settings: RoutingSettings = RoutingSettings.apply(ConfigFactory.load())
+  implicit val settings: RoutingSettings = RoutingSettings.apply(application.conf)
 
   def routes: Route = {
     pathPrefix("api") {
