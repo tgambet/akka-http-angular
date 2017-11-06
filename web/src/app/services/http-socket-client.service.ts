@@ -8,6 +8,7 @@ import {webSocket}  from 'rxjs/observable/dom/webSocket'
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/concat';
 
 @Injectable()
 export class HttpSocketClientService implements OnDestroy {
