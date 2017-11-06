@@ -51,7 +51,10 @@ lazy val root = (project in file(".")).
           s"ng build -prod -aot"
         }
       }
-      Process(command, new File(".").getAbsoluteFile).!
+      val exitCode = Process(command, new File(".").getAbsoluteFile).!
+      if (exitCode != 0)
+        throw new Exception("Build failed!")
+      exitCode
     },
     stage := stage.dependsOn(ngBuild).value
   ).enablePlugins(JavaAppPackaging)
