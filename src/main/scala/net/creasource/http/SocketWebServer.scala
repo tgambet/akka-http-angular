@@ -15,11 +15,11 @@ import net.creasource.http.actors.{SocketSinkActor, SocketSinkSupervisor}
 
 trait SocketWebServer extends WebServer { self: WebServer =>
 
-  protected val userActorProps: Props
+  protected val socketActorProps: Props
   protected val keepAliveMessage: Option[TextMessage] = Some(TextMessage("""{"method":"keepAlive"}"""))
   protected val keepAliveTimeout: FiniteDuration = 1.minute
 
-  private lazy val sinkActorProps: Props = SocketSinkActor.props(userActorProps)
+  private lazy val sinkActorProps: Props = SocketSinkActor.props(socketActorProps)
   private lazy val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
   private lazy val supervisor = system.actorOf(SocketSinkSupervisor.props(), "sockets")
 

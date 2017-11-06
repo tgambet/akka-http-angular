@@ -12,11 +12,11 @@ import spray.json._
 import scala.collection.immutable.Seq
 import scala.concurrent.Future
 
-object UserActor {
-  def props(xhrRoutes: Route)(implicit materializer: ActorMaterializer): Props = Props(new UserActor(xhrRoutes))
+object SocketActor {
+  def props(xhrRoutes: Route)(implicit materializer: ActorMaterializer): Props = Props(new SocketActor(xhrRoutes))
 }
 
-class UserActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) extends Actor with Stash with JsonSupport {
+class SocketActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) extends Actor with Stash with JsonSupport {
 
   import context.dispatcher
 
