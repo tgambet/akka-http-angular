@@ -40,7 +40,7 @@ export class HttpSocketClientService implements OnDestroy {
     return url
   }
 
-  getSocket(): Rx.Subject<string> {
+  getSocket(): Rx.Subject<Object> {
     if (!this.socket) {
       this.socket = Rx.Observable.webSocket(HttpSocketClientService.getSocketUrl());
       this.socket.subscribe(
@@ -73,7 +73,7 @@ export class HttpSocketClientService implements OnDestroy {
     if (!this.socket) {
       return this.httpClient.get(HttpSocketClientService.getAPIUrl(path))
     } else {
-      let request = {
+      let request: HttpRequest = {
         method: "HttpRequest",
         entity: {
           method: "GET",
@@ -89,7 +89,7 @@ export class HttpSocketClientService implements OnDestroy {
     if (!this.socket) {
       return this.httpClient.post(HttpSocketClientService.getAPIUrl(path), entity)
     } else {
-      let request = {
+      let request: HttpRequest = {
         method: "HttpRequest",
         entity: {
           method: "POST",
@@ -102,17 +102,16 @@ export class HttpSocketClientService implements OnDestroy {
     }
   }
 
-  private sendRequest(request: Object): Rx.Observable<Object> {
+  private sendRequest(request: HttpRequest): Rx.Observable<Object> {
     let expectResponse =
       this.getSocket()
-        .filter(r => r["method"] == "HttpResponse" && r["id"] == request["id"])
-        .map(r => r["entity"])
-        .map(r => {
-          let status = r["status"];
-          let statusText = r["statusText"];
-          let entity = r["entity"];
+        .filter((r: HttpResponse) => r.method == "HttpResponse" && r.id == request.id)
+        .map((r: HttpResponse) => {
+          let status = r.entity.status;
+          let statusText = r.entity.statusText;
+          let entity = r.entity.entity;
           if (status >= 400)
-            throw new HttpErrorResponse({ error: entity, status: status, statusText: statusText, url: request["entity"]["url"]});
+            throw new HttpErrorResponse({ error: entity, status: status, statusText: statusText, url: request.entity.url});
           return entity;
         })
         .take(1);
@@ -124,4 +123,24 @@ export class HttpSocketClientService implements OnDestroy {
     return sendRequest.concat(expectResponse)
   }
 
+}
+
+export interface HttpRequest {
+  method: string,
+  id: number,
+  entity: {
+    method: string,
+    url: string,
+    entity?: Object
+  }
+}
+
+export interface HttpResponse {
+  method: string,
+  id: number,
+  entity: {
+    status: number,
+    statusText: string,
+    entity: Object
+  }
 }
