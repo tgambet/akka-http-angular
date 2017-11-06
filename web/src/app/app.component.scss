@@ -47,6 +47,12 @@ mat-card {
 }
 @media ('min-width: 600px') {
   .logs {
-    min-width: 20rem;
+    min-width: 17rem;
   }
+}
+
+.logs-card {
+  overflow-x: auto;
+  max-width: 100%;
+  flex-grow: 2;
 }
