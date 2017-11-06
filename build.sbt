@@ -27,7 +27,7 @@ lazy val root = (project in file(".")).
       "com.typesafe.akka" %% "akka-stream-testkit"  % akkaVersion     % Test,
       "org.scalatest"     %% "scalatest"            % "3.0.4"         % Test
     ),
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "conf",
+    unmanagedResourceDirectories in Compile += baseDirectory.value / "config",
     unmanagedResourceDirectories in Compile += baseDirectory.value / "web" / "resources",
     ng := {
       import complete.DefaultParsers._
