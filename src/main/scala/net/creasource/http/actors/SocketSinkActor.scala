@@ -10,11 +10,11 @@ import spray.json._
 
 import scala.concurrent.duration._
 
-object SocketActor {
-  def props(userActorProps: Props)(implicit materializer: ActorMaterializer): Props = Props(new SocketActor(userActorProps))
+object SocketSinkActor {
+  def props(userActorProps: Props)(implicit materializer: ActorMaterializer): Props = Props(new SocketSinkActor(userActorProps))
 }
 
-class SocketActor(userActorProps: Props)(implicit materializer: ActorMaterializer) extends Actor with Stash {
+class SocketSinkActor(userActorProps: Props)(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
   logger.info("Socket opened. Actor created.")

@@ -11,7 +11,7 @@ import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-import net.creasource.http.actors.{SocketActor, SocketSupervisor}
+import net.creasource.http.actors.{SocketSinkActor, SocketSinkSupervisor}
 
 trait SocketWebServer extends WebServer { self: WebServer =>
 
@@ -19,18 +19,18 @@ trait SocketWebServer extends WebServer { self: WebServer =>
   protected val keepAliveMessage: Option[TextMessage] = Some(TextMessage("""{"method":"keepAlive"}"""))
   protected val keepAliveTimeout: FiniteDuration = 1.minute
 
-  private lazy val socketActorProps: Props = SocketActor.props(userActorProps)
+  private lazy val sinkActorProps: Props = SocketSinkActor.props(userActorProps)
   private lazy val socketsKillSwitch: SharedKillSwitch = KillSwitches.shared("sockets")
-  private lazy val supervisor = system.actorOf(SocketSupervisor.props(), "sockets")
+  private lazy val supervisor = system.actorOf(SocketSinkSupervisor.props(), "sockets")
 
-  def socketFlow(socketActor: ActorRef): Flow[Message, Message, Unit] = {
+  def socketFlow(sinkActor: ActorRef): Flow[Message, Message, Unit] = {
     val flow: Flow[Message, Message, ActorRef] =
       Flow.fromSinkAndSourceMat(
-        Sink.actorRef(socketActor, Status.Success(())),
+        Sink.actorRef(sinkActor, Status.Success(())),
         Source.actorRef(1000, OverflowStrategy.fail)
       )(Keep.right)
 
-    val flow2: Flow[Message, Message, Unit] = flow.mapMaterializedValue(sourceActor => socketActor ! sourceActor)
+    val flow2: Flow[Message, Message, Unit] = flow.mapMaterializedValue(sourceActor => sinkActor ! sourceActor)
 
     keepAliveMessage match {
       case Some(message) => flow2.keepAlive(keepAliveTimeout, () => message)
@@ -47,8 +47,8 @@ trait SocketWebServer extends WebServer { self: WebServer =>
   override def routes: Route =
     path("socket") {
       extractUpgradeToWebSocket { _ =>
-        onSuccess((supervisor ? socketActorProps)(1.second).mapTo[ActorRef]) { socketActor: ActorRef =>
-          handleWebSocketMessages(socketFlow(socketActor).via(socketsKillSwitch.flow))
+        onSuccess((supervisor ? sinkActorProps)(1.second).mapTo[ActorRef]) { sinkActor: ActorRef =>
+          handleWebSocketMessages(socketFlow(sinkActor).via(socketsKillSwitch.flow))
         }
       }
     } ~ super.routes
