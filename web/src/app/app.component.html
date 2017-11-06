@@ -12,6 +12,13 @@
   <div class="container">
     <div class="content">
       <mat-card>
+        <h1>Logs</h1>
+        <div class="logs">
+          <p *ngFor="let log of logs.reverse()">{{log}}</p>
+        </div>
+        <button mat-button (click)="logs = []">CLEAR</button>
+      </mat-card>
+      <mat-card>
         <h1>WebSocket</h1>
         <p>
           <button *ngIf="!httpSocketClient.isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
@@ -23,13 +30,14 @@
             <input matInput #input placeholder="Send a message" value="test">
           </mat-form-field>
           <button mat-button (click)="sendMessage(input.value)">SEND</button>
-          <button mat-button (click)="logs = []">CLEAR</button>
         </p>
+      </mat-card>
+      <mat-card>
+        <h1>XHR Requests</h1>
         <p>
           <button mat-button (click)="getRequest()">GET</button>
           <button mat-button (click)="postRequest(input)">POST</button>
         </p>
-        <p *ngFor="let log of logs">{{log}}</p>
       </mat-card>
     </div>
     <mat-toolbar class="footer">

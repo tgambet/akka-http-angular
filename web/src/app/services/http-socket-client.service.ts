@@ -105,7 +105,7 @@ export class HttpSocketClientService implements OnDestroy {
   private sendRequest(request: Object): Rx.Observable<Object> {
     let expectResponse =
       this.getSocket()
-        .filter(r => r["id"] == request["id"])
+        .filter(r => r["method"] == "HttpResponse" && r["id"] == request["id"])
         .map(r => r["entity"])
         .map(r => {
           let status = r["status"];

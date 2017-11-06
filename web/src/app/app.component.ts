@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import * as Material                             from '@angular/material';
 import {BreakpointObserver}                      from '@angular/cdk/layout';
-import {Subscription}                            from 'rxjs/Subscription'
+import * as Rx from 'rxjs'
 
 import {HttpSocketClientService}                 from "./services/http-socket-client.service";
 
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isSmallScreen: boolean;
 
-  socket: Subscription;
+  socket: Rx.Subscription;
 
   logs: Array<string> = [];
 
@@ -44,20 +44,23 @@ export class AppComponent implements OnInit, OnDestroy {
     this.socket && this.socket.unsubscribe()
   }
 
-  openSocket() {
-    this.socket = this.httpSocketClient.getSocket().subscribe(
-      (msg)=> this.logs.push("socket: " + JSON.stringify(msg)),
-      error => this.logs.push("socket error: " + JSON.stringify(error)),
-      () => this.logs.push("socket closed")
-    );
+  openSocket(): Rx.Subject<string> {
+    if (!this.socket)
+      this.socket = this.httpSocketClient.getSocket().subscribe(
+        (msg)=> this.logs.push("socket: " + JSON.stringify(msg)),
+        error => this.logs.push("socket error: " + JSON.stringify(error)),
+        () => this.logs.push("socket closed")
+      );
+    return this.httpSocketClient.getSocket();
   }
 
   closeSocket() {
     this.httpSocketClient.closeSocket();
+    this.socket = null
   }
 
   sendMessage(message: any) {
-    this.httpSocketClient.send({message: message});
+    this.openSocket().next(JSON.stringify({message: message}));
   }
 
   getRequest() {

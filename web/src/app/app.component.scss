@@ -23,3 +23,16 @@ mat-sidenav {
   cursor: pointer;
   user-select: none;
 }
+
+mat-card {
+  margin-bottom: 1rem;
+}
+
+.logs {
+  height: 150px;
+  overflow-y: scroll;
+  border: 1px solid #555;
+  font-size: 75%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
