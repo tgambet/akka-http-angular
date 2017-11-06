@@ -21,8 +21,8 @@
       <mat-card>
         <h1>WebSocket</h1>
         <p>
-          <button *ngIf="!httpSocketClient.isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
-          <button *ngIf="httpSocketClient.isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
+          <button *ngIf="!isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
+          <button *ngIf="isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
           <span>Status: {{httpSocketClient.isSocketOpen() ? 'OPEN' : 'CLOSED'}}</span>
         </p>
         <p>

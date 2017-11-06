@@ -54,6 +54,10 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.httpSocketClient.getSocket();
   }
 
+  isSocketOpen() {
+    return this.httpSocketClient.isSocketOpen()
+  }
+
   closeSocket() {
     this.httpSocketClient.closeSocket();
     this.socket = null
