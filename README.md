@@ -1,4 +1,4 @@
-# Akka-Http Angular Seed
+# Akka-Http Angular
 
 This project provides the seed for developing an Angular application backed by akka-http.
 It is set up for deployment on Heroku.
