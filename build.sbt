@@ -8,7 +8,7 @@ val ngBuild = taskKey[Int]("ng build -prod -aot.")
 
 lazy val root = (project in file(".")).
   settings(
-    name            := "Akka Angular Seed",
+    name            := "Akka Http Angular",
     version         := "0.1",
     organization    := "net.creasource",
     scalaVersion    := "2.12.4",
