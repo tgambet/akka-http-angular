@@ -73,4 +73,4 @@ Deploy on Heroku and configure
 
 ## License
 
-Public domain
+Unlicense

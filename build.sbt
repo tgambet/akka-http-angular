@@ -10,6 +10,7 @@ lazy val root = (project in file(".")).
   settings(
     name            := "Akka Http Angular",
     version         := "0.1",
+    licenses        := Seq("Unlicense" -> new URL("http://unlicense.org/")),
     organization    := "net.creasource",
     scalaVersion    := "2.12.4",
     scalacOptions   := Seq("-unchecked", "-deprecation", "-feature"),
