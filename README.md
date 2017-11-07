@@ -9,13 +9,15 @@ The following documentation is being worked on.
 
 Node and npm
 
-Angular-cli
-
 Sbt
 
 ## Install
 
 Clone the repo & delete .git folder
+
+git init && git add . && git commit -m "akka-http-angular seed"
+
+npm install -g @angular/cli
 
 npm install
 
@@ -70,6 +72,8 @@ Deploy on Heroku and configure
 ## Setup Intellij Idea (optional)
 
 Add a web module
+
+Add node_modules to ignored directories in root module
 
 Run configurations
 
