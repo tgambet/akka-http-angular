@@ -1,4 +1,4 @@
-package net.creasource.api
+package net.creasource.web
 
 import akka.actor.{Actor, Props, Stash}
 import akka.event.Logging
@@ -16,6 +16,12 @@ object SocketActor {
   def props(xhrRoutes: Route)(implicit materializer: ActorMaterializer): Props = Props(new SocketActor(xhrRoutes))
 }
 
+/**
+  * The Actor that receives socket messages as JsValue objects and sends back to the client through its parent.
+  *
+  * @param xhrRoutes
+  * @param materializer An actor materializer
+  */
 class SocketActor(xhrRoutes: Route)(implicit materializer: ActorMaterializer) extends Actor with Stash with JsonSupport {
 
   import context.dispatcher

@@ -9,6 +9,9 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.{ExecutionContext, Future}
 
+/**
+  * A Simple WebServer trait that uses akka-http API.
+  */
 trait WebServer {
 
   implicit val system: ActorSystem

@@ -1,4 +1,4 @@
-package net.creasource.api
+package net.creasource.web
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.model.headers.RawHeader
@@ -11,9 +11,14 @@ import spray.json.{JsString, JsValue}
 
 import scala.collection.immutable.Seq
 
+/**
+  * This is where you define your XHR routes.
+  *
+  * @param application an Application
+  */
 class APIRoutes(application: Application) {
 
-  implicit val settings: RoutingSettings = RoutingSettings.apply(application.conf)
+  implicit val settings: RoutingSettings = RoutingSettings.apply(application.config)
 
   def routes: Route = {
     pathPrefix("api") {

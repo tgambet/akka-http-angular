@@ -4,6 +4,10 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
 
+/**
+  * A Single Page Application WebServer. Serves files that are found in a "dist" directory statically and
+  * fallbacks to serving index.html when a file is not found.
+  */
 trait SPAWebServer extends WebServer { self: WebServer =>
 
   override def routes: Route =

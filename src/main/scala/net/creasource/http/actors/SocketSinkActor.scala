@@ -11,17 +11,17 @@ import spray.json._
 import scala.concurrent.duration._
 
 object SocketSinkActor {
-  def props(userActorProps: Props)(implicit materializer: ActorMaterializer): Props = Props(new SocketSinkActor(userActorProps))
+  def props(socketActorProps: Props)(implicit materializer: ActorMaterializer): Props = Props(new SocketSinkActor(socketActorProps))
 }
 
-class SocketSinkActor(userActorProps: Props)(implicit materializer: ActorMaterializer) extends Actor with Stash {
+class SocketSinkActor(socketActorProps: Props)(implicit materializer: ActorMaterializer) extends Actor with Stash {
   private val logger = Logging(context.system, this)
 
   logger.info("Socket opened. Actor created.")
 
   override def receive: Receive = {
     case sourceActor: ActorRef =>
-      val user = context.watch(context.actorOf(userActorProps, "user"))
+      val user = context.watch(context.actorOf(socketActorProps, "user"))
       unstashAll()
       context.become {
         case TextMessage.Strict(data)        => user ! JsonParser(data)

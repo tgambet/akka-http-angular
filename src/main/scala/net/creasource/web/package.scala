@@ -7,7 +7,7 @@ import spray.json._
 
 import scala.util.Try
 
-package object api {
+package object web {
 
   case class JsonMessage(method: String, id: Int, entity: JsValue)
 

@@ -11,11 +11,14 @@ object Application {
 
 }
 
+/**
+  * Represents an application. This is where you'll instantiate your top actors, connect to a database, etc...
+  */
 class Application {
 
-  val conf: Config = ConfigFactory.load()
+  val config: Config = ConfigFactory.load()
 
-  val system: ActorSystem = ActorSystem("MySystem", conf)
+  val system: ActorSystem = ActorSystem("MySystem", config)
 
   system.log.info("Application starting.")
 
