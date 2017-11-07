@@ -15,7 +15,7 @@
         <mat-card class="logs-card">
           <h1>Logs</h1>
           <div class="logs">
-            <p *ngFor="let log of logs.reverse()">{{log}}</p>
+            <p *ngFor="let log of logs.reverse()">{{ log }}</p>
           </div>
           <button mat-button (click)="logs = []">CLEAR</button>
         </mat-card>
@@ -24,7 +24,7 @@
           <p>
             <button *ngIf="!isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
             <button *ngIf="isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
-            <span>Status: {{isSocketOpen() ? 'OPEN' : 'CLOSED'}}</span>
+            <span>Status: {{ isSocketOpen() ? 'OPEN' : 'CLOSED' }}</span>
           </p>
           <p>
             <mat-form-field class="full-width">

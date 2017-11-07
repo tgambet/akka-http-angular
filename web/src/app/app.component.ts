@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import * as Material                             from '@angular/material';
-import {BreakpointObserver}                      from '@angular/cdk/layout';
-import {Subscription} from 'rxjs/Subscription'
+import * as Material from '@angular/material';
+import {BreakpointObserver} from '@angular/cdk/layout';
+import {Subscription} from 'rxjs/Subscription';
 
-import {HttpSocketClientService}                 from "./services/http-socket-client.service";
+import {HttpSocketClientService} from './services/http-socket-client.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   title = 'app';
 
-  @ViewChild("sidenav")
+  @ViewChild('sidenav')
   sidenav: Material.MatSidenav;
 
   isSmallScreen: boolean;
@@ -41,26 +41,29 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.socket && this.socket.unsubscribe()
+    if (this.socket) {
+      this.socket.unsubscribe();
+    }
   }
 
   openSocket() {
-    if (!this.socket)
+    if (!this.socket) {
       this.socket = this.httpSocketClient.getSocket().subscribe(
-        (msg)=> this.logs.push("socket: " + JSON.stringify(msg)),
-        error => this.logs.push("socket error: " + JSON.stringify(error)),
-        () => this.logs.push("socket closed")
+        (msg) => this.logs.push('socket: ' + JSON.stringify(msg)),
+        error => this.logs.push('socket error: ' + JSON.stringify(error)),
+        () => this.logs.push('socket closed')
       );
+    }
     return this.httpSocketClient.getSocket();
   }
 
   isSocketOpen() {
-    return this.httpSocketClient.isSocketOpen()
+    return this.httpSocketClient.isSocketOpen();
   }
 
   closeSocket() {
     this.httpSocketClient.closeSocket();
-    this.socket = null
+    this.socket = null;
   }
 
   sendMessage(message: any) {
@@ -70,18 +73,18 @@ export class AppComponent implements OnInit, OnDestroy {
   getRequest(endpoint: string) {
     this.httpSocketClient.get(endpoint)
       .subscribe(
-        data => this.logs.push("GET: " + JSON.stringify(data)),
+        data => this.logs.push('GET: ' + JSON.stringify(data)),
         error => console.log(error),
         () => {}
-      )
+      );
   }
 
   postRequest(endpoint: string, entity: Object) {
     this.httpSocketClient.post(endpoint, entity)
       .subscribe(data => {
-          this.logs.push("POST: " + JSON.stringify(data))
+          this.logs.push('POST: ' + JSON.stringify(data));
         }
-      )
+      );
   }
 
 }
