@@ -34,10 +34,18 @@
       true,
       {
         "order": [
-          "static-field",
-          "instance-field",
-          "static-method",
-          "instance-method"
+          "public-static-field",
+          "protected-static-field",
+          "private-static-field",
+          "public-instance-field",
+          "protected-instance-field",
+          "private-instance-field",
+          "public-static-method",
+          "protected-static-method",
+          "private-static-method",
+          "public-instance-method",
+          "protected-instance-method",
+          "private-instance-method"
         ]
       }
     ],
@@ -135,6 +143,14 @@
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true
+    "directive-class-suffix": true,
+    "angular-whitespace": [true, "check-interpolation", "check-pipe"],
+    "banana-in-box": true,
+    "templates-no-negated-async": true,
+    "no-attribute-parameter-decorator": true,
+    "no-forward-ref": true,
+    "use-view-encapsulation": true,
+    "pipe-naming": [true, "camelCase", "sg"],
+    "pipe-impure": true
   }
 }
