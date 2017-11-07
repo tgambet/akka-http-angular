@@ -1,7 +1,9 @@
 # Akka-Http Angular Seed
 
 This project provides the seed for developing an Angular application backed by akka-http.
-It is prepared for deployment on Heroku.
+It is set up for deployment on Heroku.
+
+The following documentation is being worked on.
 
 ## Dependencies
 
@@ -27,14 +29,6 @@ ng serve
 
 sbt run
 
-## Setup Intellij Idea (optional)
-
-Add a web module
-
-Run configurations
-
-TsLint
-
 ## Configure
 
 Logback.xml & reference.conf
@@ -53,9 +47,9 @@ Angular documentation
 
 ### Backend
 
-net.creasource.http package
-
 net.creasource.core package
+
+net.creasource.http package
 
 net.creasource.web package
 
@@ -67,9 +61,19 @@ sbt compile stage
 
 ## Deploy
 
+Buildpacks
+
 The Procfile
 
 Deploy on Heroku and configure
+
+## Setup Intellij Idea (optional)
+
+Add a web module
+
+Run configurations
+
+TsLint
 
 ## License
 
