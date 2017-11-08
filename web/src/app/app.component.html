@@ -1,7 +1,7 @@
 <mat-toolbar class="header">
   <a *ngIf="isSmallScreen && !sidenav.opened" (click)="sidenav.open()" class="icon"><mat-icon>menu</mat-icon></a>
   <a *ngIf="isSmallScreen && sidenav.opened" (click)="sidenav.close()" class="icon"><mat-icon>close</mat-icon></a>
-  My App
+  Akka-Http Angular
 </mat-toolbar>
 
 <mat-sidenav-container>
@@ -11,41 +11,10 @@
 
   <div class="container">
     <div class="content">
-      <div class="cards">
-        <mat-card class="logs-card">
-          <h1>Logs</h1>
-          <div class="logs">
-            <p *ngFor="let log of logs.reverse()">{{ log }}</p>
-          </div>
-          <button mat-button (click)="logs = []">CLEAR</button>
-        </mat-card>
-        <mat-card>
-          <h1>WebSocket</h1>
-          <p>
-            <button *ngIf="!isSocketOpen()" mat-button (click)="openSocket()">OPEN SOCKET</button>
-            <button *ngIf="isSocketOpen()" mat-button (click)="closeSocket()">CLOSE SOCKET</button>
-            <span>Status: {{ isSocketOpen() ? 'OPEN' : 'CLOSED' }}</span>
-          </p>
-          <p>
-            <mat-form-field class="full-width">
-              <input matInput #input placeholder="Send a message" value="test">
-            </mat-form-field>
-            <button mat-button (click)="sendMessage(input.value)">SEND</button>
-          </p>
-        </mat-card>
-        <mat-card>
-          <h1>XHR Requests</h1>
-          <p>
-            <mat-form-field class="full-width">
-              <input matInput #endpoint placeholder="Endpoint" value="/api/get">
-            </mat-form-field>
-          </p>
-          <p>
-            <button mat-button (click)="getRequest(endpoint.value)">GET</button>
-            <button mat-button (click)="postRequest(endpoint.value, input)">POST</button>
-          </p>
-        </mat-card>
-      </div>
+      <p>Welcome to Akka-Http Angular.</p>
+      <p>This is an Angular5 project backed by akka-http.</p>
+      <p>It provides a basic UI shell using Angular Material and WebSockets support out-of-the-box.</p>
+      <p>Find out more information on features and installation <a href="https://github.com/tgambet/akka-http-angular">on Github</a>.</p>
     </div>
     <mat-toolbar class="footer">
       Footer

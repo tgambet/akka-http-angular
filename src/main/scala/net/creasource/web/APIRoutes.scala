@@ -36,7 +36,7 @@ class APIRoutes(application: Application) {
           },
           put {
             entity(as[JsValue]) { json =>
-              complete(json)
+              complete(JsString("OK PUT"))
             }
           },
           delete {

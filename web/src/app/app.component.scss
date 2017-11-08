@@ -20,39 +20,10 @@ mat-sidenav {
   flex-direction: column;
   .content {
     flex-grow: 1;
-    padding: 0.5rem;
+    padding: 1rem;
   }
 }
 
-.cards {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-mat-card {
-  margin: 0.5rem;
-  flex-grow: 1;
-}
-
-.logs {
-  height: 150px;
-  min-width: 12.5rem;
-  overflow: scroll;
-  border: 1px solid #bbb;
-  font-size: 75%;
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  white-space: nowrap;
-}
-@media ('min-width: 600px') {
-  .logs {
-    min-width: 17rem;
-  }
-}
-
-.logs-card {
-  overflow-x: auto;
-  max-width: 100%;
-  flex-grow: 2;
+p {
+  margin-bottom: 0.5rem;
 }

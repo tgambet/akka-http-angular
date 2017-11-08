@@ -6,7 +6,6 @@ import * as Material from '@angular/material';
 import { BreakpointObserver, MediaMatcher } from '@angular/cdk/layout';
 
 import { AppComponent } from './app.component';
-import { HttpSocketClientService } from './services/http-socket-client.service';
 
 @NgModule({
   declarations: [
@@ -19,16 +18,11 @@ import { HttpSocketClientService } from './services/http-socket-client.service';
     Material.MatMenuModule,
     Material.MatSidenavModule,
     Material.MatToolbarModule,
-    Material.MatIconModule,
-    Material.MatInputModule,
-    Material.MatFormFieldModule,
-    Material.MatButtonModule,
-    Material.MatCardModule
+    Material.MatIconModule
   ],
   providers: [
     MediaMatcher,
-    BreakpointObserver,
-    HttpSocketClientService
+    BreakpointObserver
   ],
   bootstrap: [AppComponent]
 })
